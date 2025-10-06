@@ -30,8 +30,23 @@ def normalizar(cadena):
     Devuelve:
       Cadena de texto con la palabra normalizada
     """
-    # TODO: Implementa esta función (y elimina la instrucción pass)
-    pass
+    cadena = cadena.lower().strip()
+    res = ""
+    for c in cadena:
+        if c == 'á' or c == 'ä':
+            res += 'a'
+        elif c == 'é' or c == 'ë':
+            res += 'e'
+        elif c == 'í' or c == 'ï':
+            res += 'i'
+        elif c in 'óö':
+            res += 'o'
+        elif c in 'úü':
+            res += 'u'
+        else:
+            res += c
+    return res
+
 
 def ocultar(palabra_secreta, letras_usadas=""):
     '''Devuelve una cadena de texto con la palabra enmascarada. 
@@ -44,8 +59,13 @@ def ocultar(palabra_secreta, letras_usadas=""):
     Devuelve:
       Cadena de texto con la palabra enmascarada
     '''
-    # TODO: Implementa esta función (y elimina la instrucción pass)
-    pass
+    res = ""
+    for letra in palabra_secreta:
+        if letra in letras_usadas:
+            res += letra
+        else:
+            res += "_"
+    return res
 
 
 def ha_ganado(palabra_enmascarada):
@@ -57,14 +77,64 @@ def ha_ganado(palabra_enmascarada):
     Devuelve:
     - True si el jugador ha ganado, False en caso contrario
     '''
-    # TODO: Implementa esta función (y elimina la instrucción pass)
-    pass
+    res = ""
+    if not "_" in palabra_enmascarada:
+        return True
+    else:
+        return False
 
 
-# TODO: Implementa la función mostrar_estado
+def mostrar_estado(palabra_enmascarada, letras_usadas, intentos_restantes):
+    print(f"Estado: {" ".join(palabra_enmascarada)}")
+    print(f"Letras usadas: {letras_usadas}")
+    print(f"Intentos restantes: {intentos_restantes}")
 
-# TODO: Implementa la función pedir_letra
 
-# TODO: Implementa la función jugar
+def pedir_letra(letras_usadas):
+    '''La función pide una letra al jugador, comprueba si es válida.
+            Si la se introduce un número, más de una letra u otra letra repetida, debe denegar esa letra.
+        Letras usadas: letras que ya se han usado
+        '''
+    res = ""
+    letra = str(input("Introduce una letra:"))
+    if letra in letras_usadas:
+        print("Esa letra ya la has usado anteriormente")
+    elif letra.isdigit():
+        print("Debes introducir una letra")
+    elif len(letra) >= 2:
+        print("Debes introducir una única letra")
+    else:
+        print(f"Letra introducida: {letra.lower()}")
+        res = letra
+    return res
 
-# TODO: Escribe el programa principal
+
+def jugar(palabra_secreta):
+    print('''Bienvenido al juego ahorcado!
+          ''')
+
+    palabra_secreta = normalizar(palabra_secreta)
+    if palabra_secreta == "":
+        return None
+    palabra_enmascarada = ocultar(palabra_secreta)
+    numero_intentos = 6
+    letras_usadas = ""
+
+    while numero_intentos > 0 and not ha_ganado(palabra_enmascarada):
+        mostrar_estado(palabra_enmascarada, letras_usadas, numero_intentos)
+        letra = pedir_letra(letras_usadas)
+        letra = str(letra)
+        letras_usadas += letra
+        if letra in palabra_secreta:
+            print("✅ ¡Bien!")
+            palabra_enmascarada = ocultar(palabra_secreta, letras_usadas)
+        else:
+            print("❌ La letra no está en la palabra.")
+            numero_intentos -= 1
+
+    if ha_ganado(palabra_enmascarada):
+        print(f"🎉 ¡Enhorabuena, has ganado!. La palabra era {palabra_secreta}")
+    else:
+        print(f"😞 Has perdido. La palabra, era: {palabra_secreta}")
+
+
